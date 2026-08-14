@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.9.3 - 2026-08-14
+
+* Fixed color clustering aborting with `attempt to divide by zero` in
+  `ColorSum::average`. A cluster merged away by `combine_clusters` loses its
+  `ColorSum` but can still be named by `cluster_indices`, so `stage_2` divided
+  by zero ranking its color. Such clusters also reached `clusters_output`, where
+  every accessor faults — `to_image_with_hole` sizes its bitmap from the cleared
+  `rect`, then indexes it with live pixels. Both sites now skip them. The test is
+  the summed pixel count, not the area: a cluster merged into itself keeps its
+  `indices` while losing its sum. The clustering algorithm is untouched — across
+  14400 configurations, only the case that previously panicked differs.
+
 ## 0.9.2 - 2026-08-06
 
 * Fixed `BinaryImage::to_clusters` aborting with `panic!("overflow")` on masks

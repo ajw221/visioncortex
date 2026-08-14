@@ -288,7 +288,11 @@ where
         &mut self.clusters[index.0 as usize]
     }
 
-    pub fn result(self) -> Clusters {
+    pub fn result(mut self) -> Clusters {
+        // A cluster can be merged away after being pushed here, leaving an
+        // empty sum and a cleared rect. Every accessor faults on it.
+        self.clusters_output.retain(|i| self.clusters[i.0 as usize].sum.counter > 0);
+
         Clusters {
             width: self.width,
             height: self.height,
@@ -489,6 +493,9 @@ where
             let mut infos: Vec<_> = mycluster
                 .neighbours(&self.view())
                 .iter()
+                // Merged-away clusters have no sum left to rank. Not `area()`:
+                // one merged into itself keeps its indices but loses its sum.
+                .filter(|other| self.get_cluster(**other).sum.counter > 0)
                 .map(|other| NeighbourInfo {
                     index: *other,
                     diff: (self.diff)(mycolor, self.get_cluster(*other).color()),
