@@ -17,4 +17,4 @@ exclude = [
 [dependencies]
 bit-vec = "0.6"
 num-traits = "0.2"
-flo_curves = "0.8"
+flo_curves = { git = "https://github.com/ajw221/flo_curves" }
