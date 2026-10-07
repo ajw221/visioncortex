@@ -17,4 +17,4 @@ exclude = [
 [dependencies]
 bit-vec = "0.6"
 num-traits = "0.2"
-flo_curves = "0.3"
+flo_curves = "0.8"
